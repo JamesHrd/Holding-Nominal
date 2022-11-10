@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang = en>
+
+<!--Creates the base webpage heading and imports the required modules-->
+
+<head>
+    <title>Holding Nominal</title>
+    <script src="Holding Nominal/Main.js"></script>
+    <script src="phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<!--This holds the main functions that operate the game including: -->
+<!--The pixel size of the game window-->
+<!--The preload function to load assets-->
+<!--The create function to generate the stage and objects-->
+<!--The update function to run physics and the game as a whole-->
+
+<body>
+<script type="text/javascript">
+
+    var config = {
+        type: Phaser.AUTO,
+        width: 2000,
+        height: 1000,
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+    function preload ()
+    {
+        this.load.image('background', 'assets/background.png')
+    }
+
+    function create ()
+    {
+        this.add.image(1000,500,'background')
+    }
+
+    function update ()
+    {
+
+    }
+
+</script>
+
+
+
+</body>
+</html>

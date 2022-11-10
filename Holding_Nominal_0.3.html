@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang = en>
+
+<!--Creates the base webpage heading and imports the required modules-->
+
+<head>
+    <title>Holding Nominal</title>
+    <script src="phaser.js"></script>
+    <script src="gun.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+<script type="text/javascript">
+
+    var config = {
+        type: Phaser.AUTO,
+        width: 1900,
+        height: 900,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 50 },
+                debug: false
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+
+    //sets up variables to be used in the game
+    var fireInterval = 0;
+    var clip = 100;
+    var ammoText;
+    var reloading = false;
+
+    function preload ()
+    {
+        // loads the sprites required to play the game
+        this.load.image('background', 'assets/background.png');
+        this.load.image('e_blobby', 'assets/blob.png');
+        this.load.image('gun_point', 'assets/mount.png');
+        this.load.image('bullet', 'assets/projectile.png');
+    }
+
+    function create ()
+    {
+        //draws the sprites to the screen where needed on startup
+        this.add.image(1000,400,'background');
+        this.add.image(200, 710,'gun_point').setScale(1.4,1.4);
+        ammoText = this.add.text(180, 850, '', { fill: '#000000'});
+        
+
+        //creates a group for the bullets to spawn with
+        bullets = this.physics.add.group();
+
+
+        //prevents a r-click menu pop-up
+        this.input.mouse.disableContextMenu();
+
+
+        //allows for keyboard inputs
+        cursors = this.input.keyboard.createCursorKeys();
+
+
+        //sets up the ammo readout
+        ammoText.setText([
+            clip,'/100'
+        ]);
+    }
+
+    function update ()
+    {
+        //sets the mouse as the pointer target
+        var pointer = this.input.activePointer;
+
+        pointer_x = pointer.worldX;
+        pointer_y = pointer.worldY;
+        current_time = this.time.now;
+        gun_update(pointer_x, pointer_y, this.time.now);
+
+
+        //controls when the gun shoots (left clicking)
+        if (game.input.activePointer.isDown && current_time > fireInterval && clip > 0){
+            fireInterval = current_time + 90;
+            shoot(ratio_x,ratio_y);
+        }
+
+
+        //controls when the gun can be reloaded and does so
+        if (cursors.space.isDown && clip < 100){
+            reloading = true;
+        }
+        
+    }
+
+    
+</script>
+
+
+
+</body>
+</html>
+
+<!--
+    To-do:
+        Damage an enemy
+        Enemy spawn and move across
+        Enemy despawn after damage taken
+        
+-->

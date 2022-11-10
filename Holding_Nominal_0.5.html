@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang = en>
+
+<!--Creates the base webpage heading and imports the required modules-->
+
+<head>
+    <title>Holding Nominal</title>
+    <script src="phaser.js"></script>
+    <script src="gun.js"></script>
+    <script src="enemy.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+<script type="text/javascript">
+
+    var config = {
+        type: Phaser.AUTO,
+        width: 1900,
+        height: 900,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 50 },
+                debug: false
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+
+    //sets up variables to be used in the game
+    var fireInterval = 0;
+    var clip = 100;
+    var ammoText;
+    var reloading = false;
+    var level = 1;
+    var spawnIntervalGround = 0;
+    var spawnIntervalSky = 0;
+    var spawnIntervalSmall = 0;
+    var spawnCap = 5;
+    var smallCap = 5;
+    var spawned = 0;
+    var smallSpawn = 0;
+    var spawnPeriod = 2000;
+    var enemySpeed = -100;
+
+    function preload ()
+    {
+        // loads the sprites required to play the game
+        this.load.image('background', 'assets/background.png');
+        this.load.image('ground_blob', 'assets/blob_ground.png');
+        this.load.image('sky_blob', 'assets/blob_sky.png');
+        this.load.image('small_blob', 'assets/blob_small.png');
+        this.load.image('gun_point', 'assets/mount.png');
+        this.load.image('bullet', 'assets/projectile.png');
+    }
+
+    function create ()
+    {
+        //draws the sprites to the screen where needed on startup
+        this.add.image(1000,400,'background');
+        this.add.image(200, 710,'gun_point').setScale(1.4,1.4);
+        ammoText = this.add.text(180, 850, '', { fill: '#000000'});
+        
+
+        //creates a group for the bullets to spawn with
+        bullets = this.physics.add.group();
+
+
+        //creates a group for the enemies to spawn with
+        enemies = this.physics.add.group({allowGravity: false});
+
+
+        //adds collision between bullets and enemies
+        this.physics.add.overlap(bullets, enemies, damageEnemy, null, this);
+
+
+        //prevents a r-click menu pop-up
+        this.input.mouse.disableContextMenu();
+
+
+        //allows for keyboard inputs
+        cursors = this.input.keyboard.createCursorKeys();
+
+
+        //sets up the ammo readout
+        ammoText.setText([
+            clip,'/100'
+        ]);
+    }
+
+    function update ()
+    {
+        //sets the mouse as the pointer target
+        var pointer = this.input.activePointer;
+        gun_update(pointer.worldX, pointer.worldY, this.time.now);
+
+
+        //controls when the gun shoots (left clicking)
+        if (game.input.activePointer.isDown && this.time.now > fireInterval && clip > 0){
+            fireInterval = this.time.now + 100;
+            shoot(ratio_x,ratio_y);
+        }
+
+
+        //controls when the gun can be reloaded and does so
+        if (cursors.space.isDown && clip < 100){
+            reloading = true;
+        }
+
+
+        if (spawned < spawnCap && this.time.now > (spawnIntervalGround - Phaser.Math.Between(0, 800))){
+            spawn_enemy_ground(enemySpeed, level);
+            spawned += 1;
+            spawnIntervalGround = this.time.now + spawnPeriod;
+            if (spawnIntervalGround < 0){
+                spawnIntervalGround = 0;
+            }
+        }
+
+
+        if (spawned < spawnCap && this.time.now > spawnIntervalSky && level > 3){
+            spawn_enemy_sky(enemySpeed, level);
+            spawned += 1;
+            spawnIntervalSky = this.time.now + (spawnPeriod - 100);
+            if (spawnIntervalSky < 0){
+                spawnIntervalSky = 0;
+            }
+        }
+
+
+        if (smallSpawn < smallCap && this.time.now > spawnIntervalSmall && level > 5){
+            spawn_enemy_small(enemySpeed, level);
+            spawnIntervalSmall = this.time.now + (spawnPeriod - 1000);
+            if (spawnIntervalSmall < 0){
+                spawnIntervalSmall = 0;
+            }
+            smallSpawn += 1;
+        }
+
+
+        if (spawned === spawnCap){
+            spawnIntervalGround = this.time.now + 10000;
+            spawnIntervalSky = this.time.now + 10000;
+            spawnIntervalSmall = this.time.now + 10000;
+            if (spawnPeriod > 100){
+                spawnPeriod -= 100;
+            }
+            spawnCap += level;
+            if (level > 5){
+                smallCap += level;
+            }
+            enemySpeed -= (10*level);
+            spawned = 0;
+            smallSpawn = 0;
+            level += 1;
+        }
+    }
+
+    
+</script>
+
+
+
+</body>
+</html>
+
+<!--
+    To-do:
+        
+        
+-->

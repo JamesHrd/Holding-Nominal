@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang = en>
+
+<!--Creates the base webpage heading and imports the required modules-->
+
+<head>
+    <title>Holding Nominal</title>
+    <script src="Main.js"></script>
+    <script src="phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<!--This holds the main functions that operate the game including: -->
+<!--The pixel size of the game window-->
+<!--The preload function to load assets-->
+<!--The create function to generate the stage and objects-->
+<!--The update function to run physics and the game as a whole-->
+
+<body>
+<script type="text/javascript">
+
+    var config = {
+        type: Phaser.AUTO,
+        width: 2000,
+        height: 1000,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 50 },
+                debug: false
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+    function preload ()
+    {
+        // loads the sprites required to play the game
+        this.load.image('background', 'assets/background.png');
+        this.load.image('blobby', 'assets/blob.png');
+        this.load.image('gun_point', 'assets/gunner.png');
+        this.load.image('bullet', 'assets/projectile.png');
+    }
+
+    function create ()
+    {
+        // draws the sprites to the screen where needed on startup
+        this.add.image(1000,500,'background');
+        this.add.image(1000,500,'blobby');
+        this.add.image(300, 850,'gun_point');
+        
+        //creates a group for the bullets to spawn with
+        bullets = this.physics.add.group();
+    }
+
+    function update ()
+    {
+        //calculates the offset from the gun muzzle to mouse pointer
+
+        //gets the position of the mouse pointer within the game screen
+        var pointer = this.input.activePointer;
+
+        //limits aim to straight up
+        if (pointer.worldX <= 385) {
+            targetX = 385
+        } else {
+            targetX = pointer.worldX;
+        }
+
+        //limits aim to straight ahead
+        if (pointer.worldY >= 825) {
+            targetY = 825
+        } else {
+            targetY = pointer.worldY;
+        }
+
+
+        //calculates the offset from aim and mouse location
+        offsetx = 385 - targetX;
+        offsety = 825 - targetY;
+
+
+        //makes sure all inputs are positive
+        if (offsetx < 0){
+            offsetx *= -1
+        }
+        if (offsety < 0){
+            offsety *= -1
+        }
+
+
+        //calculates a velocity ratio (two decimals to divide up the total speed of the projectile into x and y velocity)
+        total_offset = offsetx + offsety
+        ratio_x = offsetx / total_offset
+        ratio_y = offsety / total_offset
+
+
+        //calculates a spray offset
+        spray = Phaser.Math.FloatBetween(-0.04, 0.04)
+
+
+        //limits the effects of spray to only effect the bullets on specific axises
+        ratio_x += spray*ratio_y
+        ratio_y += spray*ratio_x
+
+
+        //controls when the gun shoots (left clicking)
+        if (game.input.activePointer.isDown){
+            shoot(ratio_x,ratio_y);
+        }
+    }
+
+    function shoot (velx,vely)
+    {
+        //creates the bullets
+        var bullet = bullets.create(385,825,'bullet');
+        bullet.setCollideWorldBounds(false);
+
+
+        //muzzle spray
+        bullet.setVelocity((2000 * velx), (2000 * -vely));
+        bullet.allowGravity = true;
+    }
+
+</script>
+
+
+
+</body>
+</html>
+
+<!--
+    To-do:
+        Fire rate limiting
+        Reloading
+        Damage an enemy
+        Enemy spawn and move across
+        Enemy despawn after damage taken
+        
+-->
