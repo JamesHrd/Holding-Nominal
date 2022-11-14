@@ -73,7 +73,7 @@ function shoot(velx,vely){
 
 
     //muzzle spray and bullet angling
-    bullet.setVelocity((2000 * velx), (2000 * -vely));
+    bullet.setVelocity((3000 * velx), (3000 * -vely));
     bullet.setAngle(0-(90*ratio_y))
     bullet.allowGravity = true;
     clip -= 1;
