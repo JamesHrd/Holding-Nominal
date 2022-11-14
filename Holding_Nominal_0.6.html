@@ -66,6 +66,7 @@
         this.load.image('gun_point', 'assets/mount.png');
         this.load.image('bullet', 'assets/projectile.png');
         this.load.image('coin', 'assets/coin.png');
+        this.load.image('rocket', 'assets/rocket.png');
     }
 
     function create ()
@@ -73,6 +74,7 @@
         //draws the sprites to the screen where needed on startup
         this.add.image(1000,400,'background');
         this.add.image(200, 710,'gun_point').setScale(1.4,1.4);
+        rocket = this.add.image(10,410,'rocket');
         ammoText = this.add.text(180, 850, '', { fill: '#000000'});
         coinText = this.add.text(280, 850, '', { fill: '#000000'});
         
@@ -91,6 +93,7 @@
 
         //adds collision between bullets and enemies
         this.physics.add.overlap(bullets, enemies, damageEnemy, null, this);
+        this.physics.add.overlap(enemies, rocket, gameover, null, this);
 
 
         //prevents a r-click menu pop-up
@@ -195,3 +198,9 @@
 
 </body>
 </html>
+
+<!--
+    To-do:
+        GAMEOVER WITH ROCKET
+        
+-->
