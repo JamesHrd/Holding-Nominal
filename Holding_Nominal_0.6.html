@@ -74,7 +74,6 @@
         //draws the sprites to the screen where needed on startup
         this.add.image(1000,400,'background');
         this.add.image(200, 710,'gun_point').setScale(1.4,1.4);
-        rocket = this.add.image(10,410,'rocket');
         ammoText = this.add.text(180, 850, '', { fill: '#000000'});
         coinText = this.add.text(280, 850, '', { fill: '#000000'});
         
@@ -83,17 +82,18 @@
         bullets = this.physics.add.group();
 
 
-        //creates a group for the enemies to spawn with
+        //creates a group for the enemies and rocket to spawn with
         enemies = this.physics.add.group({allowGravity: false});
+        rocketGroup = this.physics.add.group({allowGravity: false})
 
 
         //creates a group for the drops to spawn with
         drops = this.physics.add.group();
 
 
-        //adds collision between bullets and enemies
+        //adds collision for bullets and enemies
         this.physics.add.overlap(bullets, enemies, damageEnemy, null, this);
-        this.physics.add.overlap(enemies, rocket, gameover, null, this);
+        this.physics.add.overlap(enemies, rocketGroup, gameOver, null, this);
 
 
         //prevents a r-click menu pop-up
@@ -102,6 +102,10 @@
 
         //allows for keyboard inputs
         cursors = this.input.keyboard.createCursorKeys();
+
+
+        //spawns the rocket to detect a loss
+        rocket = rocketGroup.create(10, 410, 'rocket');
 
 
         //sets up the ammo and coins readout
@@ -134,7 +138,7 @@
         }
 
 
-        if (spawned < spawnCap && this.time.now > (spawnIntervalGround - Phaser.Math.Between(0, 800))){
+        if (level != 0 && spawned < spawnCap && this.time.now > (spawnIntervalGround - Phaser.Math.Between(0, 800))){
             spawn_enemy_ground(enemySpeed, level);
             spawned += 1;
             spawnIntervalGround = this.time.now + spawnPeriod;
@@ -144,7 +148,7 @@
         }
 
 
-        if (spawned < spawnCap && this.time.now > (spawnIntervalSky - Phaser.Math.Between(0, 400)) && level > 5){
+        if (level != 0 && spawned < spawnCap && this.time.now > (spawnIntervalSky - Phaser.Math.Between(0, 400)) && level > 5){
             spawn_enemy_sky(enemySpeed, level);
             spawned += 1;
             spawnIntervalSky = this.time.now + (spawnPeriod - 100);
@@ -154,7 +158,7 @@
         }
 
 
-        if (smallSpawn < smallCap && this.time.now > (spawnIntervalSmall - Phaser.Math.Between(0, 200)) && level > 10){
+        if (level != 0 && smallSpawn < smallCap && this.time.now > (spawnIntervalSmall - Phaser.Math.Between(0, 200)) && level > 10){
             spawn_enemy_small(enemySpeed, level);
             spawnIntervalSmall = this.time.now + (spawnPeriod - 1000);
             if (spawnIntervalSmall < 0){
@@ -190,6 +194,11 @@
         coinText.setText([
             'Coins:',coins
         ])
+    }
+
+    function gameOver(enemies,rocket){
+        enemies.disableBody(true,true);
+        level = 0;
     }
     
 </script>
