@@ -11,7 +11,7 @@ function spawn_enemy_sky(speed){
 }
 
 function spawn_enemy_small(speed){
-    var enemy = enemies.create(2000, (Phaser.Math.Between(740, 780)), 'small_blob').setScale(0.5,0.5);
+    var enemy = enemies.create(2000, (Phaser.Math.Between(770, 800)), 'small_blob').setScale(0.5,0.5);
     enemy.setVelocity(speed-100,0);
     enemy.allowGravity = false;
 }

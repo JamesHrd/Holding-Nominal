@@ -76,6 +76,8 @@
         this.add.image(200, 710,'gun_point').setScale(1.4,1.4);
         ammoText = this.add.text(180, 850, '', { fill: '#000000'});
         coinText = this.add.text(280, 850, '', { fill: '#000000'});
+        roundText = this.add.text(100, 100, '', { fill: '#000000'});
+        tutorialText = this.add.text(200, 300, '', { fill: '#000000'});
         
 
         //creates a group for the bullets to spawn with
@@ -108,7 +110,7 @@
         rocket = rocketGroup.create(10, 410, 'rocket');
 
 
-        //sets up the ammo and coins readout
+        //sets up the text readout
         ammoText.setText([
             clip,'/100'
         ]);
@@ -116,10 +118,19 @@
         coinText.setText([
             'Coins:',coins
         ])
+
+        roundText.setText([
+            'ROUND:',level
+        ]);
+
+        tutorialText.setText([
+            'The aliens are coming, use your mouse to aim and shoot with the buttons! Reload with SPACE!'
+        ])
     }
 
     function update ()
     {
+        console.log(level)
         //sets the mouse as the pointer target
         var pointer = this.input.activePointer;
         gun_update(pointer.worldX, pointer.worldY, this.time.now);
@@ -139,6 +150,10 @@
 
 
         if (level != 0 && spawned < spawnCap && this.time.now > (spawnIntervalGround - Phaser.Math.Between(0, 800))){
+            roundText.setText([
+                'ROUND:',level
+            ]);
+            tutorialUpdate(level,tutorialText);
             spawn_enemy_ground(enemySpeed, level);
             spawned += 1;
             spawnIntervalGround = this.time.now + spawnPeriod;
@@ -199,6 +214,25 @@
     function gameOver(enemies,rocket){
         enemies.disableBody(true,true);
         level = 0;
+        tutorialUpdate(level,tutorialText);
+    }
+
+    function tutorialUpdate(level,tutorialText){
+        if (level > 4 && level < 10){
+            tutorialText.setText([
+                "They're bringing flying reinforcements! Aim up to get them!"
+            ]);
+        }
+        if (level > 9){
+            tutorialText.setText([
+                "The munchins are coming! Be quick, they're fast!"
+            ]);
+        }
+        if (level === 0){
+            tutorialText.setText([
+                "Damn! The rocket's damaged... if you want to run the simulation again press F5..."
+            ]);
+        }
     }
     
 </script>
