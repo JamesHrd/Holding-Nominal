@@ -75,9 +75,14 @@
         this.add.image(1000,400,'background');
         this.add.image(200, 710,'gun_point').setScale(1.4,1.4);
         ammoText = this.add.text(180, 850, '', { fill: '#000000'});
-        coinText = this.add.text(280, 850, '', { fill: '#000000'});
-        roundText = this.add.text(100, 100, '', { fill: '#000000'});
+        coinText = this.add.text(480, 850, '', { fill: '#000000'});
+        roundText = this.add.text(1700, 10, '', { fill: '#000000'});
         tutorialText = this.add.text(200, 300, '', { fill: '#000000'});
+
+        ammoText.setFontSize(tutorialText.fontSize = 20);
+        coinText.setFontSize(tutorialText.fontSize = 20);
+        roundText.setFontSize(tutorialText.fontSize = 20);
+        tutorialText.setFontSize(tutorialText.fontSize = 20);
         
 
         //creates a group for the bullets to spawn with
@@ -116,16 +121,18 @@
         ]);
 
         coinText.setText([
-            'Coins:',coins
+            'Coins: '+coins
         ])
 
         roundText.setText([
-            'ROUND:',level
+            'ROUND:'+level
         ]);
 
         tutorialText.setText([
             'The aliens are coming, use your mouse to aim and shoot with the buttons! Reload with SPACE!'
         ])
+
+        
     }
 
     function update ()
